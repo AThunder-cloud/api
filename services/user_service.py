@@ -1,7 +1,7 @@
 # app/services/user_service.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.user_repository import UserRepository
-from app.schemas.user_schemas import UserCreate
+from app.schemas.user_schemas import UserCreate,UserResponse
 
 class UserService:
     def __init__(self, user_repository: UserRepository):
@@ -15,6 +15,8 @@ class UserService:
 
     async def delete_user(self, db: AsyncSession, user_id: int):
         return await self.user_repository.delete_user(db, user_id)
-
+    
+    async def update_user(self,db:AsyncSession,user_data:UserResponse):
+        return await self.user_repository.update_user(db,user_data)
 # ✅ Create a Singleton Service Instance
 user_service = UserService(UserRepository)

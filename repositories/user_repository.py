@@ -2,7 +2,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.models.user import User
-from app.schemas.user_schemas import UserCreate
+from app.schemas.user_schemas import UserCreate,UserResponse
 
 class UserRepository:
     @staticmethod
@@ -26,3 +26,21 @@ class UserRepository:
             await db.commit()
             return {"message": "User deleted"}
         return {"error": "User not found"}
+    
+    @staticmethod
+    async def update_user(db: AsyncSession, user_data: UserResponse) -> User | None:
+        """Updates a user in the database and returns the updated user."""
+        try:
+            result = await db.execute(select(User).where(User.id == user_data.id))
+            edit_user: User = result.scalars().one()  # Fetch the user
+            
+            edit_user.name = user_data.name
+            edit_user.email = user_data.email
+            
+            await db.commit() 
+            await db.refresh(edit_user) 
+            return edit_user
+        
+        except:
+            return None  # Return None if user is not found
+            

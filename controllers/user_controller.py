@@ -11,7 +11,7 @@ class UserController:
         self.router.add_api_route("/users", self.add_user, methods=["POST"], response_model=UserResponse)
         self.router.add_api_route("/users", self.list_users, methods=["GET"], response_model=list[UserResponse])
         self.router.add_api_route("/users/{id}", self.delete_user, methods=["DELETE"])
-        self.router.add_api_route
+        self.router.add_api_route("/users", self.update_user,methods=["PUT"], response_model=UserResponse|None)
 
     async def add_user(self, user: UserCreate, db: AsyncSession = Depends(get_db)):
         return await user_service.create_user(db, user)
@@ -21,6 +21,9 @@ class UserController:
 
     async def delete_user(self, id: int, db: AsyncSession = Depends(get_db)):
         return await user_service.delete_user(db, id)
+    
+    async def update_user(self,user: UserResponse, db:AsyncSession = Depends(get_db)):
+        return await user_service.update_user(db,user)
 
 # ✅ Create an instance of the controller
 user_controller = UserController()
